@@ -1,47 +1,17 @@
 const express = require('express');
+const item_routes = require('./route/itemRoute');
 const session = require('cookie-session'); // session middleware
-const bodyParser = require('body-parser'); // parameters middleware
-
-const urlencodedParser = bodyParser.urlencoded({ extended: false }) // create application/x-www-form-urlencoded parser
-const jsonParser = bodyParser.json() // create application/json parser
-
 const app = express();
+
 app
-    .use(session({ secret: 'todolistsercret' }))
-    .use(express.static(__dirname + '/public'))
-    .use((req, res, next) => {
-        if (req.session.todolist === undefined) {
-            req.session.todolist = [];
+    // define secret to cookies session
+    .use(session({secret: 'appsecret'}))
+    // set default value to session.items
+    .use((req, res, next)=> {
+        if (req.session.items === undefined) {
+            req.session.items = [];
         }
         next();
     })
-    .get('/todo', (req, res) => {
-        /**
-         * TODO :
-         * render template with session.todolist as argument
-         **/
-    })
-    .post('/todo', urlencodedParser, (req, res) => {
-        /**
-         * TODO :
-         *  get parameters from form.
-         *  Update session.todolist
-         *  Redirect to url '/todo'
-         **/
-    })
-    .put('/todo', jsonParser, (req, res) => {
-        /**
-         * TODO :
-         *  Get json from request.body (AJAX)
-         *  Update session.todolist
-         */
-    })
-    .get('/todo/:id', (req, res) => {
-        /**
-         * TODO :
-         *  get parameters id from request.
-         *  Update session.todolist
-         *  Redirect to url '/todo'
-         */
-    })
+    .use(item_routes)
     .listen(8080);
