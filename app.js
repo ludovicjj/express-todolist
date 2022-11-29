@@ -16,14 +16,32 @@ app
         next();
     })
     .get('/todo', (req, res) => {
-        res.send('test')
+        /**
+         * TODO :
+         * render template with session.todolist as argument
+         **/
     })
     .post('/todo', urlencodedParser, (req, res) => {
+        /**
+         * TODO :
+         *  get parameters from form.
+         *  Update session.todolist
+         *  Redirect to url '/todo'
+         **/
     })
     .put('/todo', jsonParser, (req, res) => {
-
+        /**
+         * TODO :
+         *  Get json from request.body (AJAX)
+         *  Update session.todolist
+         */
     })
     .get('/todo/:id', (req, res) => {
-
+        /**
+         * TODO :
+         *  get parameters id from request.
+         *  Update session.todolist
+         *  Redirect to url '/todo'
+         */
     })
     .listen(8080);
