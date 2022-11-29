@@ -6,6 +6,8 @@ const app = express();
 app
     // define secret to cookies session
     .use(session({secret: 'appsecret'}))
+    // define static dir (img/js/css)
+    .use(express.static(__dirname + "/public"))
     // set default value to session.items
     .use((req, res, next)=> {
         if (req.session.items === undefined) {
