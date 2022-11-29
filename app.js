@@ -9,8 +9,14 @@ const app = express();
 app
     .use(session({ secret: 'todolistsercret' }))
     .use(express.static(__dirname + '/public'))
+    .use((req, res, next) => {
+        if (req.session.todolist === undefined) {
+            req.session.todolist = [];
+        }
+        next();
+    })
     .get('/todo', (req, res) => {
-
+        res.send('test')
     })
     .post('/todo', urlencodedParser, (req, res) => {
     })
