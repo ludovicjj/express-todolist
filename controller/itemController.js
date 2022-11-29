@@ -1,6 +1,5 @@
 exports.index = (req, res) => {
-    console.log(req.session.items)
-    res.send('main page');
+    res.render("todo.ejs", {items: req.session.items})
 }
 
 exports.item_add = (req, res) => {
