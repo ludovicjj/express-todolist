@@ -8,6 +8,7 @@ const jsonParser = bodyParser.json() // create application/json parser
 const app = express();
 app
     .use(session({ secret: 'todolistsercret' }))
+    .use(express.static(__dirname + '/public'))
     .get('/todo', (req, res) => {
 
     })
