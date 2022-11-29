@@ -5,7 +5,7 @@ const router = express.Router();
 const item_controller = require("../controller/itemController");
 
 router
-    .get('/todo', item_controller.index)
+    .get('/', item_controller.index)
     .get('/todo/delete', item_controller.item_delete)
     .get('/todo/add', item_controller.item_add)
     .get('/todo/update', item_controller.item_update);
