@@ -1,4 +1,6 @@
-exports.logger = (req, res, next) => {
-    console.log(`URI : ${req.url}`)
-    next()
+exports.initSessionItem = (req, res, next) => {
+    if (req.session.item === undefined) {
+        req.session.item = [];
+    }
+    next();
 }
