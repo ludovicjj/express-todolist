@@ -1,22 +1,17 @@
 const express = require('express');
 const item_routes = require('./route/itemRoute');
 const session = require('cookie-session'); // session middleware
-const {logger} = require('./middleware')
+const morgan = require('morgan')
 const app = express();
 const port = 8080
 
 app
-    // define secret to cookies session
+    // middleware cookies session
     .use(session({secret: 'appsecret'}))
-    .use(logger)
-    // define static dir (img/js/css)
+    // middleware log req info
+    .use(morgan('dev'))
+    // middleware define static dir (img/js/css)
     .use(express.static(__dirname + "/public"))
-    // set default value to session.items
-    .use((req, res, next)=> {
-        if (req.session.items === undefined) {
-            req.session.items = [];
-        }
-        next();
-    })
+    // middleware router
     .use("/api", item_routes)
     .listen(port, () => console.log(`Server run on : http://localhost:${port}`));
