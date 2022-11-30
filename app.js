@@ -1,12 +1,14 @@
 const express = require('express');
 const item_routes = require('./route/itemRoute');
 const session = require('cookie-session'); // session middleware
+const {logger} = require('./middleware')
 const app = express();
 const port = 8080
 
 app
     // define secret to cookies session
     .use(session({secret: 'appsecret'}))
+    .use(logger)
     // define static dir (img/js/css)
     .use(express.static(__dirname + "/public"))
     // set default value to session.items
