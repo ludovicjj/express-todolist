@@ -16,5 +16,5 @@ app
         }
         next();
     })
-    .use(item_routes)
+    .use("/api", item_routes)
     .listen(port, () => console.log(`Server run on : http://localhost:${port}`));

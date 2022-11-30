@@ -1,15 +1,12 @@
-exports.index = (req, res) => {
-    res.render("todo.ejs", {items: req.session.items})
+const {success} = require('../helper');
+const items = require('../mock-item');
+
+exports.item_detail = (req, res) => {
+    const id = parseInt(req.params.id);
+    const item = items.find(item => item.id === id);
+    res.json(success('OK', item))
 }
 
-exports.item_add = (req, res) => {
-    res.send('controller handle add item');
-}
-
-exports.item_delete = (req, res) => {
-    res.send('controller handle delete item');
-}
-
-exports.item_update = (req, res) => {
-    res.send('controller handle update item');
+exports.item_list = (req, res) => {
+    res.json(success('OK', items))
 }
