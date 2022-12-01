@@ -8,5 +8,6 @@ router
     .get('/items/:id', item_controller.item_detail)
     .get('/items', item_controller.item_list)
     .post('/items', item_controller.item_add)
+    .put('/items/:id', item_controller.item_update)
 
 module.exports = router;
