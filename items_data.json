@@ -58,5 +58,15 @@
         "id": 12,
         "name": "Lire et écrire dans un fichier",
         "created": "2022-12-01T12:36:36.769Z"
+    },
+    {
+        "id": 13,
+        "name": "un item avec la method PUT modifié",
+        "created": "2022-12-02T12:26:49.082Z"
+    },
+    {
+        "id": 14,
+        "name": "Un item pour tester la création.",
+        "created": "2022-12-02T12:28:56.144Z"
     }
 ]

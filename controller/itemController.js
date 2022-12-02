@@ -1,57 +1,56 @@
 const fs = require('node:fs');
-const {success, error, getUniqueId} = require('../helper');
+const {successResponse, errorResponse, getUniqueId, filterBody} = require('../helper');
 const pathItemData = "./items_data.json";
-const items = JSON.parse(fs.readFileSync(pathItemData, "utf8"));
+let items = JSON.parse(fs.readFileSync(pathItemData, "utf8"));
+
 
 exports.item_detail = (req, res) => {
     const id = parseInt(req.params.id);
     const item = items.find(item => item.id === id);
-    res.json(success('OK', item))
+    res.json(successResponse('OK', item))
 }
 
 exports.item_list = (req, res) => {
-    res.json(success('OK', items))
+    res.json(successResponse('OK', items))
 }
 exports.item_add = (req, res) => {
-    const {name} = req.body;
+    let filteredBody = filterBody(req, res, ['name'])
+    let itemCreated = createItem(filteredBody)
 
-    if (name !== undefined) {
-        res.status(400);
-        return res.json(error('Bad Request', {message: "Missing field name"}, 400))
-    }
-
-    if (name !== '') {
-        res.status(422);
-        return res.json(error('Unprocessable entity', {message: "Name cannot be blank"}, 422))
-    }
-
-    const id = getUniqueId(items);
-    let itemCreated = {id, name, created: new Date()}
-    items.push(itemCreated);
-    fs.writeFileSync(pathItemData, JSON.stringify(items, null, 4))
     res.status(201);
-    res.json(success('Created', itemCreated, 201))
-
+    return res.json(successResponse('Created', itemCreated, 201))
 }
 
 exports.item_update = (req, res) => {
     const id = parseInt(req.params.id);
-    const {name} = req.body;
+    let filteredBody = filterBody(req, res, ['name'])
 
-    if (name === undefined) {
-        res.status(400);
-        return res.json(error('Bad Request', {message: "Missing field name"}, 400))
+    let item = items.find(item => item.id === id);
+    if (!item) {
+        const itemCreated = createItem(filteredBody)
+        res.status(201);
+        return res.json(successResponse('Created', itemCreated, 201))
+    } else {
+        const itemUpdated = updateItem(item, filteredBody)
+        return res.json(successResponse('OK', itemUpdated))
     }
+}
 
-    if (name === '') {
-        res.status(422);
-        return res.json(error('Unprocessable entity', {message: "Name cannot be blank"}, 422))
-    }
+function createItem(data) {
+    const id = getUniqueId(items);
+    const itemCreated = {id, ...data, created: new Date()};
+    items.push(itemCreated);
+    fs.writeFileSync(pathItemData, JSON.stringify(items, null, 4))
+    return itemCreated;
+}
 
-    const updatedItems = items.map(item => {
-        return (item.id === id) ? {...item, name} : item
+function updateItem(item, data) {
+    const updatedItem = {...item, ...data}
+
+    items = items.map(item => {
+        return (item.id === updatedItem.id) ? updatedItem : item
     })
-    const updatedItem = updatedItems.find(item => item.id === id);
-    fs.writeFileSync(pathItemData, JSON.stringify(updatedItems, null, 4))
-    res.json(success('OK', updatedItem));
+    fs.writeFileSync(pathItemData, JSON.stringify(items, null, 4));
+
+    return updatedItem;
 }
