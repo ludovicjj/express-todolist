@@ -9,5 +9,6 @@ router
     .get('/items', item_controller.item_list)
     .post('/items', item_controller.item_add)
     .put('/items/:id', item_controller.item_update)
+    .delete('/items/:id', item_controller.item_delete)
 
 module.exports = router;

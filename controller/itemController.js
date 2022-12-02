@@ -1,56 +1,56 @@
-const fs = require('node:fs');
-const {successResponse, errorResponse, getUniqueId, filterBody} = require('../helper');
-const pathItemData = "./items_data.json";
-let items = JSON.parse(fs.readFileSync(pathItemData, "utf8"));
-
+const { getItems, createItem, updateItem, deleteItem } = require('../helper/itemHelper');
+const { success, error} = require('../helper/responseHelper');
+const { filterBody } = require('../helper/requestHelper');
 
 exports.item_detail = (req, res) => {
     const id = parseInt(req.params.id);
+    const items = getItems();
     const item = items.find(item => item.id === id);
-    res.json(successResponse('OK', item))
+
+    if (!item) {
+        return res.status(404).json(error('Not Found', null, 404))
+    }
+
+    return res.json(success('OK', item))
 }
 
 exports.item_list = (req, res) => {
-    res.json(successResponse('OK', items))
+    const items = getItems();
+
+    return res.json(success('OK', items))
 }
 exports.item_add = (req, res) => {
-    let filteredBody = filterBody(req, res, ['name'])
-    let itemCreated = createItem(filteredBody)
+    let data = filterBody(req, res, ['name'])
+    let itemCreated = createItem(data);
 
-    res.status(201);
-    return res.json(successResponse('Created', itemCreated, 201))
+    return res.status(201).json(success('Created', itemCreated, 201));
 }
 
 exports.item_update = (req, res) => {
     const id = parseInt(req.params.id);
-    let filteredBody = filterBody(req, res, ['name'])
+    const items = getItems();
+    let data = filterBody(req, res, ['name'])
 
     let item = items.find(item => item.id === id);
     if (!item) {
-        const itemCreated = createItem(filteredBody)
-        res.status(201);
-        return res.json(successResponse('Created', itemCreated, 201))
+        const itemCreated = createItem(data)
+
+        return res.status(201).json(success('Created', itemCreated, 201))
     } else {
-        const itemUpdated = updateItem(item, filteredBody)
-        return res.json(successResponse('OK', itemUpdated))
+        const itemUpdated = updateItem(item, data)
+        return res.json(success('OK', itemUpdated))
     }
 }
 
-function createItem(data) {
-    const id = getUniqueId(items);
-    const itemCreated = {id, ...data, created: new Date()};
-    items.push(itemCreated);
-    fs.writeFileSync(pathItemData, JSON.stringify(items, null, 4))
-    return itemCreated;
-}
+exports.item_delete = (req, res) => {
+    const id = parseInt(req.params.id);
+    let items = getItems();
+    const deletedItem = items.find(item => item.id === id);
 
-function updateItem(item, data) {
-    const updatedItem = {...item, ...data}
+    if (!deletedItem) {
+        return res.status(404).json(error('Not Found', null, 404))
+    }
 
-    items = items.map(item => {
-        return (item.id === updatedItem.id) ? updatedItem : item
-    })
-    fs.writeFileSync(pathItemData, JSON.stringify(items, null, 4));
-
-    return updatedItem;
+    deleteItem(deletedItem);
+    res.status(200).json(success('OK', deletedItem));
 }

@@ -1,25 +1,5 @@
-const RequestManager = require("./event-emitters/requestManager");
-
-
-exports.successResponse = (message, data, status = 200) => {
-    return {message, status, data}
-}
-
-const errorResponse =  (message, errors, status = 400) => {
-    return {message, status, errors}
-}
-
-exports.errorResponse = errorResponse
-
-exports.getUniqueId = (items) => {
-    if (!items.length) {
-        return 1;
-    }
-    const ids = items.map(item => item.id)
-    const id = ids.reduce((acc, id) => Math.max(acc, id), -Infinity)
-
-    return id + 1;
-}
+const RequestManager = require("../event-emitters/requestManager");
+const { error } = require("./responseHelper")
 
 exports.filterBody = (req, res, allowedKeys) => {
     let body = req.body;
@@ -36,7 +16,7 @@ exports.filterBody = (req, res, allowedKeys) => {
         const requestManager = new RequestManager();
         requestManager.on('handleErrors', (errors) => {
             res.status(400);
-            return res.json(errorResponse('Bad Request', errors))
+            return res.json(error('Bad Request', errors))
         })
         requestManager.handleErrors(missingKeys);
     }
