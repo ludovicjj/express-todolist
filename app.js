@@ -17,9 +17,18 @@ const sequelize = new Sequelize('mariadb://root:root@localhost:3306/todo_db', {
 sequelize.authenticate()
     .then(_ => console.log('Connection has been established successfully.'))
     .catch(error => console.error('Unable to connect to the database:', error))
+
 const item = itemModel(sequelize, DataTypes);
+
 sequelize.sync({ force: true })
-    .then(_ => console.log('table item added to database'))
+    .then(_ => {
+        item.create({
+            title: 'titre test',
+            content: 'content test',
+            category: ['Javascript', 'NodeJS', 'Sequelize'].join(),
+            published: true
+        }).then(createdItem => console.log(createdItem.toJSON()))
+    })
 
 
 app
