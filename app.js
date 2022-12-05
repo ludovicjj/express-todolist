@@ -2,7 +2,8 @@ const express = require('express');
 const item_routes = require('./route/itemRoute');
 const morgan = require('morgan');
 const favicon = require('serve-favicon');
-const { Sequelize } = require('sequelize');
+const { Sequelize, DataTypes } = require('sequelize');
+const itemModel = require('./src/models/item')
 
 const app = express();
 const port = 8080;
@@ -14,11 +15,11 @@ const sequelize = new Sequelize('mariadb://root:root@localhost:3306/todo_db', {
 });
 
 sequelize.authenticate()
-    .then(_ => {
-        console.log('Connection has been established successfully.');
-    }).catch(error => {
-        console.error('Unable to connect to the database:', error);
-    })
+    .then(_ => console.log('Connection has been established successfully.'))
+    .catch(error => console.error('Unable to connect to the database:', error))
+const item = itemModel(sequelize, DataTypes);
+sequelize.sync({ force: true })
+    .then(_ => console.log('table item added to database'))
 
 
 app
