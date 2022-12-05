@@ -4,6 +4,7 @@ const morgan = require('morgan');
 const favicon = require('serve-favicon');
 const { Sequelize, DataTypes } = require('sequelize');
 const itemModel = require('./src/models/item')
+const FixtureItems = require('./mock_items');
 
 const app = express();
 const port = 8080;
@@ -18,16 +19,18 @@ sequelize.authenticate()
     .then(_ => console.log('Connection has been established successfully.'))
     .catch(error => console.error('Unable to connect to the database:', error))
 
-const item = itemModel(sequelize, DataTypes);
+const Item = itemModel(sequelize, DataTypes);
 
 sequelize.sync({ force: true })
     .then(_ => {
-        item.create({
-            title: 'titre test',
-            content: 'content test',
-            category: ['Javascript', 'NodeJS', 'Sequelize'].join(),
-            published: true
-        }).then(createdItem => console.log(createdItem.toJSON()))
+        FixtureItems.map(item => {
+            Item.create({
+                title: item.title,
+                content: item.content,
+                category: item.category.join(),
+                published: item.published
+            })
+        })
     })
 
 
