@@ -22,7 +22,7 @@ const initDatabase = () => {
             Item.create({
                 title: item.title,
                 content: item.content,
-                category: item.category.join(),
+                categories: item.categories,
                 published: item.published
             })
         })
