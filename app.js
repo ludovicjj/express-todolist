@@ -15,4 +15,8 @@ app
     .use(express.static(__dirname + "/public"))
     .use(express.json())
     .use("/api", item_routes)
+    .use(({ res }) => {
+        const message = "Ressource Not found";
+        res.status(404).json({message})
+    })
     .listen(port, () => console.log(`Server run on : http://localhost:${port}`));
