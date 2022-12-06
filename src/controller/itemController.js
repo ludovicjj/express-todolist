@@ -30,5 +30,12 @@ exports.item_update = (req, res) => {
 }
 
 exports.item_delete = (req, res) => {
-    console.log("handle delete item")
+    const id = req.params.id;
+    Item.findByPk(id).then(deletedItem => {
+        Item.destroy({
+            where: {id: deletedItem.id}
+        }).then(_ => {
+            res.status(200).json({message: "OK", status: 200, data: deletedItem})
+        })
+    })
 }
