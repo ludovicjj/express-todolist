@@ -19,7 +19,14 @@ exports.item_add = (req, res) => {
 }
 
 exports.item_update = (req, res) => {
-    console.log("handle update item")
+    const id = req.params.id
+    Item.update(req.body, {
+        where: {id: id}
+    }).then(_ => {
+        Item.findByPk(id).then(item => {
+            res.status(200).json({message: "OK", status: 200, data: item})
+        })
+    })
 }
 
 exports.item_delete = (req, res) => {
