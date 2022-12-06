@@ -6,8 +6,14 @@ const itemFixture = require('../fixtures/fixture_items')
 const sequelize = new Sequelize('mariadb://root:root@localhost:3306/todo_db', {
     logging: false,
     dialectOptions: {
-        timezone: '+01:00'
-    }
+        typeCast: function (field, next) { // for reading from database
+            if (field.type === 'DATETIME') {
+                return field.string();
+            }
+            return next()
+        },
+    },
+    timezone: 'Europe/Paris' // writing to database
 });
 
 // model
