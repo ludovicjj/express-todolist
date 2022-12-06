@@ -2,19 +2,28 @@ const { Item } = require('../database/sequelize')
 
 exports.item_list = (req, res) => {
     Item.findAll().then(items => {
-        res.status(200).json({message: "OK", status: 200, data: items})
+        res.json({message: "OK", status: 200, data: items})
+    }).catch(error => {
+        res.status(500).json({message: "Internal Server Error", status: 500, data: error})
     })
 }
 
 exports.item_detail = (req, res) => {
     Item.findByPk(req.params.id).then(item => {
-        res.status(200).json({message: "OK", status: 200, data: item})
+        if (item === null) {
+            return res.status(404).json({message: "Not Found", status: 404})
+        }
+        res.json({message: "OK", status: 200, data: item})
+    }).catch(error => {
+        res.status(500).json({message: "Internal Server Error", status: 500, data: error})
     })
 }
 
 exports.item_add = (req, res) => {
     Item.create(req.body).then(item => {
         res.status(201).json({message: "Created", status: 201, data: item})
+    }).catch(error => {
+        res.status(500).json({message: "Internal Server Error", status: 500, data: error})
     })
 }
 
@@ -23,19 +32,29 @@ exports.item_update = (req, res) => {
     Item.update(req.body, {
         where: {id: id}
     }).then(_ => {
-        Item.findByPk(id).then(item => {
-            res.status(200).json({message: "OK", status: 200, data: item})
+        return Item.findByPk(id).then(item => {
+            if (item === null) {
+                return res.status(404).json({message: "Not Found", status: 404})
+            }
+            res.json({message: "OK", status: 200, data: item})
         })
+    }).catch(error => {
+        res.status(500).json({message: "Internal Server Error", status: 500, data: error})
     })
 }
 
 exports.item_delete = (req, res) => {
     const id = req.params.id;
     Item.findByPk(id).then(deletedItem => {
-        Item.destroy({
+        if (deletedItem === null) {
+            return res.status(404).json({message: "Not Found", status: 404})
+        }
+        return Item.destroy({
             where: {id: deletedItem.id}
         }).then(_ => {
-            res.status(200).json({message: "OK", status: 200, data: deletedItem})
+            res.json({message: "OK", status: 200, data: deletedItem})
         })
+    }).catch(error => {
+        res.status(500).json({message: "Internal Server Error", status: 500, data: error})
     })
 }
