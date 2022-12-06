@@ -13,9 +13,15 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.TEXT,
             allowNull: false
         },
-        category: {
+        categories: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: false,
+            get() {
+                return this.getDataValue('categories').split(',');
+            },
+            set(categories) {
+                this.setDataValue('categories', categories.join());
+            }
         },
         published: {
             type: DataTypes.BOOLEAN,
