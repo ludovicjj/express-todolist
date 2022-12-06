@@ -1,5 +1,4 @@
 const RequestManager = require("../event-emitters/requestManager");
-const { error } = require("./responseHelper")
 
 exports.filterBody = (req, res, allowedKeys) => {
     let body = req.body;
@@ -15,8 +14,7 @@ exports.filterBody = (req, res, allowedKeys) => {
     if (Object.keys(missingKeys).length > 0) {
         const requestManager = new RequestManager();
         requestManager.on('handleErrors', (errors) => {
-            res.status(400);
-            return res.json(error('Bad Request', errors))
+            console.log(errors)
         })
         requestManager.handleErrors(missingKeys);
     }
