@@ -1,4 +1,6 @@
-const { Item } = require('../database/sequelize')
+const { Item } = require("../database/sequelize");
+const { ValidationError } = require("sequelize");
+const validator = require("../validator/validator")
 
 exports.item_list = (req, res) => {
     Item.findAll().then(items => {
@@ -23,6 +25,11 @@ exports.item_add = (req, res) => {
     Item.create(req.body).then(item => {
         res.status(201).json({message: "Created", status: 201, data: item})
     }).catch(error => {
+        if (error instanceof ValidationError) {
+            const errors = validator.buildValidationData(error.errors)
+            return res.status(400).json({message: "Bad Request", status: 400, errors})
+        }
+
         res.status(500).json({message: "Internal Server Error", status: 500, data: error})
     })
 }
