@@ -26,7 +26,7 @@ exports.item_add = (req, res) => {
         res.status(201).json({message: "Created", status: 201, data: item})
     }).catch(error => {
         if (error instanceof ValidationError) {
-            const errors = validator.buildValidationData(error.errors)
+            const errors = validator.buildErrorMessage(error.errors)
             return res.status(400).json({message: "Bad Request", status: 400, errors})
         }
 
