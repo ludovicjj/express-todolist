@@ -1,16 +1,10 @@
 const allowedCategories = [
-    "php",
-    "javascript",
-    "es6",
-    "nodejs",
-    "twig",
-    "sequelize",
-    "sql",
-    "mariadb",
-    "symfony",
-    "fixtures",
-    "router",
-    "design pattern"
+    "php", "javascript",
+    "es6", "nodejs",
+    "twig", "sequelize",
+    "sql", "mariadb",
+    "symfony", "fixtures",
+    "router", "design pattern"
 ]
 
 module.exports = (sequelize, DataTypes) => {
@@ -23,6 +17,7 @@ module.exports = (sequelize, DataTypes) => {
         title: {
             type: DataTypes.STRING,
             allowNull: false,
+            unique: { msg: "This title is already taken." },
             validate: {
                 notNull: { msg: "Property title is required." },
                 notEmpty: { args: true, msg: "Property title cannot be empty."}
