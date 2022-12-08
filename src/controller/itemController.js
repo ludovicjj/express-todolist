@@ -1,13 +1,36 @@
 const { Item } = require("../database/sequelize");
-const { ValidationError } = require("sequelize");
+const { ValidationError, Op } = require("sequelize");
 const { buildErrorMessage } = require("../factory/errorValidationFactory")
+const Pagination = require('../pagination/pagination');
 
 exports.item_list = (req, res) => {
-    Item.findAll().then(items => {
-        res.json({message: "OK", status: 200, data: items})
-    }).catch(error => {
-        res.status(500).json({message: "Internal Server Error", status: 500, data: error})
-    })
+    const {title} = req.query;
+    if (title) {
+        const page = parseInt(req.query.page) || 1;
+        const limit = 2
+        const offset = (page - 1) * limit
+
+        Item.findAndCountAll({
+            where: {
+                title: {
+                    [Op.like] : `%${title}%`
+                }
+            },
+            offset,
+            limit
+        }).then(({count, rows}) => {
+            const pagination = new Pagination(page, limit, count, req)
+            const { pages } = pagination.paginated
+
+            return res.json({message: "OK", status: 200, pages, total: count, data: rows})
+        })
+    } else {
+        Item.findAll().then(items => {
+            res.json({message: "OK", status: 200, data: items})
+        }).catch(error => {
+            res.status(500).json({message: "Internal Server Error", status: 500, data: error})
+        })
+    }
 }
 
 exports.item_detail = (req, res) => {
