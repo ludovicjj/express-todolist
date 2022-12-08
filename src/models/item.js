@@ -1,3 +1,18 @@
+const allowedCategories = [
+    "php",
+    "javascript",
+    "es6",
+    "nodejs",
+    "twig",
+    "sequelize",
+    "sql",
+    "mariadb",
+    "symfony",
+    "fixtures",
+    "router",
+    "design pattern"
+]
+
 module.exports = (sequelize, DataTypes) => {
     return sequelize.define('item', {
         id: {
@@ -25,12 +40,17 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false,
             validate: {
-                customValidator(value) {
-                    if (value.split(',').includes('bad category')) {
-                        throw new Error("invalid category.");
-                    }
+                isAllowedCategories(value) {
+                    value.toLowerCase().split(',').forEach(category => {
+                        if (!allowedCategories.includes(category)) {
+                            throw new Error(`Allowed categories are : ${allowedCategories.join(', ')}`);
+                        }
+                    });
                 },
-                maxCategoriesValidator(value) {
+                isLengthCategoriesValid(value) {
+                    if (!value) {
+                        throw new Error("An item must have at least one category.");
+                    }
                     if (value.split(',').length > 3) {
                         throw new Error("An item cannot have more than 3 categories.");
                     }
