@@ -1,6 +1,6 @@
 const { Item } = require("../database/sequelize");
 const { ValidationError } = require("sequelize");
-const validator = require("../validator/validator")
+const { buildErrorMessage } = require("../factory/errorValidationFactory")
 
 exports.item_list = (req, res) => {
     Item.findAll().then(items => {
@@ -26,7 +26,7 @@ exports.item_add = (req, res) => {
         res.status(201).json({message: "Created", status: 201, data: item})
     }).catch(error => {
         if (error instanceof ValidationError) {
-            const errors = validator.buildErrorMessage(error.errors)
+            const errors = buildErrorMessage(error.errors)
             return res.status(400).json({message: "Bad Request", status: 400, errors})
         }
         res.status(500).json({message: "Internal Server Error", status: 500, data: error})
@@ -46,7 +46,7 @@ exports.item_update = (req, res) => {
         })
     }).catch(error => {
         if (error instanceof ValidationError) {
-            const errors = validator.buildErrorMessage(error.errors)
+            const errors = buildErrorMessage(error.errors)
             return res.status(400).json({message: "Bad Request", status: 400, errors})
         }
         res.status(500).json({message: "Internal Server Error", status: 500, data: error})
