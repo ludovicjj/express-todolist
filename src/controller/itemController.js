@@ -29,7 +29,6 @@ exports.item_add = (req, res) => {
             const errors = validator.buildErrorMessage(error.errors)
             return res.status(400).json({message: "Bad Request", status: 400, errors})
         }
-
         res.status(500).json({message: "Internal Server Error", status: 500, data: error})
     })
 }
@@ -46,6 +45,10 @@ exports.item_update = (req, res) => {
             res.json({message: "OK", status: 200, data: item})
         })
     }).catch(error => {
+        if (error instanceof ValidationError) {
+            const errors = validator.buildErrorMessage(error.errors)
+            return res.status(400).json({message: "Bad Request", status: 400, errors})
+        }
         res.status(500).json({message: "Internal Server Error", status: 500, data: error})
     })
 }
