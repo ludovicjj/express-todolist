@@ -12,7 +12,7 @@ class Pagination {
         this.limit = limit
         this.totalResult = total
         this.offset = (this.page - 1) * limit
-        this.maxPage = Math.round(this.totalResult / this.limit)
+        this.maxPage = Math.ceil(this.totalResult / this.limit)
         this.fullurl = `${req.protocol}://${req.get('host')}${req.originalUrl}`
 
         this.pages = [];
@@ -71,6 +71,7 @@ class Pagination {
     }
 
     lastPage() {
+        console.log(this.maxPage)
         let currentUrl = this._getUrl("current")
 
         if (!currentUrl) {
