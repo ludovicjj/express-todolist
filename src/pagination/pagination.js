@@ -71,7 +71,6 @@ class Pagination {
     }
 
     lastPage() {
-        console.log(this.maxPage)
         let currentUrl = this._getUrl("current")
 
         if (!currentUrl) {
