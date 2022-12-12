@@ -2,12 +2,12 @@ const BaseError = require('./baseError')
 
 class Api404Error extends BaseError {
     /**
-     * @param {Array} errors
+     * @param {{path: String, message: String}[]} errorsObj
      */
     constructor (
-        errors
+        errorsObj
     ) {
-        super(errors)
+        super(errorsObj)
     }
 
 }
