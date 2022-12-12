@@ -1,69 +1,71 @@
 const { Item } = require("../database/sequelize");
 const { Op } = require("sequelize");
 const Pagination = require('../pagination/pagination');
-const Api404Error = require('../errors/api404Error')
+const Api404Error = require('../errors/api404Error');
 
-class SearchItem {
-    constructor() {
-        this.page= null;
-        this.limit = null
-        this.query = {
-            where: {}
-        }
-        this.allowedField = ["title","content", "published"]
-    }
+const allowedSearchField = ["title","content", "published"]
 
-    /**
-     * @param {Object} request
-     */
-    search(request) {
-        this.initializeQueryParams(request.query)
-        return this.buildQuery(request.query).then(_ => {
-            return this.loadFromDatabase(this.query, request)
-        })
-    }
 
-    initializeQueryParams({page, limit}) {
-        this.page = parseInt(page) || 1
-        this.limit = parseInt(limit) || 3
-    }
+/**
+ * @param {Object} request
+ */
+module.exports = function search (request) {
+    return buildQuery(request.query).then((query) => loadFromDatabase(query, request))
+}
 
-    buildQuery({ page, limit, ...searchQueryParams }) {
-        let searchParams = Object.entries(searchQueryParams);
-        let searchParamFilter = searchParams.filter(([key, _]) => this.allowedField.includes(key))
+function buildQuery({ page, limit, ...searchQueryParams }) {
+    return new Promise((resolve, reject) => {
+        // Init query and errors
+        let query = {};
+        let errors = []
 
-        for (const [key, value] of searchParamFilter) {
-            if (key === 'title' && value.length <= 2) {
-                return Promise.reject(new Api404Error("Search field title required at least 3 letters"));
+        // Fetch query params page and limit
+        let queryPage = Math.abs(parseInt(page)) || 1;
+        let queryLimit = Math.abs(parseInt(limit)) || 3;
+
+        // Filter queryParams input
+        let searchParamFilter = Object.entries(searchQueryParams)
+            .filter(([key]) => allowedSearchField.includes(key))
+            .reduce((acc, [key, value]) => ({...acc, [key]: value}), {})
+
+        // Build operation AND
+        query.where = { [Op.and]: [] }
+        for (const key in searchParamFilter) {
+            let value = searchParamFilter[key];
+
+            if (key === 'title' && value.length < 3) {
+                errors.push({path: "title", message: "Search field title required at least 3 letters"})
             }
 
             if (key === 'published') {
-                this.query.where[key] = value.toLocaleString() === 'true'
+                query.where[Op.and].push({ [key]: value === 'true' })
             } else {
-                this.query.where[key] = {[Op.like]:`%${value}%`}
+                query.where[Op.and].push({ [key]: {[Op.like]: `%${value}%`} })
             }
-
         }
 
-        this.query.limit = this.limit
-        this.query.offset = (this.page - 1) * this.limit
-        return Promise.resolve()
-    }
+        // Add limit, offset, page to query
+        query.limit = queryLimit;
+        query.offset = (queryPage - 1) * queryLimit;
+        query.page = queryPage
 
-    /**
-     *
-     * @param {Object} query    The object used for the query from model
-     * @param {Object} request  The Request object
-     */
-    loadFromDatabase(query, request) {
-        return Item.findAndCountAll(query).then(({rows, count}) => {
-            const pagination = new Pagination(this.page, this.limit, count, request)
-            const links = pagination.getPaginatedLinks();
+        if (errors.length > 0) {
+            reject(new Api404Error(errors));
+        }
 
-            return {total: count, pages: links, data: rows}
-        })
-    }
-
+        resolve(query);
+    })
 }
 
-module.exports = SearchItem
+/**
+ *
+ * @param {Object} query    The object used for the query from model
+ * @param {Object} request  The Request object
+ */
+function loadFromDatabase(query, request) {
+    return Item.findAndCountAll(query).then(({rows, count}) => {
+        const pagination = new Pagination(query.page, query.limit, count, request)
+        let links = pagination.getPaginatedLinks();
+        return {total: count, pages: links, data: rows}
+    })
+}
