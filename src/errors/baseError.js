@@ -1,8 +1,7 @@
 class BaseError extends Error {
-    constructor (message) {
-        super(message)
-        this.message = message
-
+    constructor (errors) {
+        super()
+        this.errors = errors
     }
 }
 
