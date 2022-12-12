@@ -7,7 +7,7 @@ const allowedSearchField = ["title","content", "published"]
 
 
 /**
- * @param {Object} request
+ * @param {Object} request The Request object
  */
 module.exports = function search (request) {
     return buildQuery(request.query).then((query) => loadFromDatabase(query, request))
@@ -57,11 +57,6 @@ function buildQuery({ page, limit, ...searchQueryParams }) {
     })
 }
 
-/**
- *
- * @param {Object} query    The object used for the query from model
- * @param {Object} request  The Request object
- */
 function loadFromDatabase(query, request) {
     return Item.findAndCountAll(query).then(({rows, count}) => {
         const pagination = new Pagination(query.page, query.limit, count, request)
