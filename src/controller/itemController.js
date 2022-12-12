@@ -1,21 +1,19 @@
 const { Item } = require("../database/sequelize");
 const { ValidationError } = require("sequelize");
 const { buildErrorMessage } = require("../factory/errorValidationFactory")
-const SearchItem = require("../search/itemSearch")
+const searchItem = require("../search/itemSearch")
 const ApiError = require('../errors/api404Error')
 
 exports.item_list = (req, res) => {
-    const searchItem = new SearchItem();
-
-    searchItem.search(req).then(result => {
-        return res.json({message: "OK", status: 200, ...result})
+    searchItem(req).then(items => {
+        return res.json({message: "OK", status: 200, ...items})
     }).catch(error => {
         if (error instanceof ApiError) {
-            return res.status(400).json({message: "Bad Request", status: 400, error:error.message})
+            const errors = buildErrorMessage(error.errors)
+            return res.status(400).json({message: "Bad Request", status: 400, errors})
         }
         return res.status(500).json({message: "Internal Server Error", status: 500, data: error})
     })
-
 }
 
 exports.item_detail = (req, res) => {
