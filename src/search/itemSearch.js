@@ -49,6 +49,11 @@ function buildQuery({ page, limit, ...searchQueryParams }) {
         query.offset = (queryPage - 1) * queryLimit;
         query.page = queryPage
 
+        // Add OrderBy title
+        if (searchParamFilter.title) {
+            query.order = ["title"]
+        }
+
         if (errors.length > 0) {
             reject(new Api404Error(errors));
         }
