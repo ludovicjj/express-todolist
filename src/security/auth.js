@@ -6,7 +6,7 @@ module.exports = (req, res, next) => {
     const authorization = req.headers.authorization
 
     if (!authorization) {
-        res.status(401).json({message: "Unauthorized", status: 401, errors: "Missing JWT token in request header"})
+        return res.status(401).json({message: "Unauthorized", status: 401, errors: "Missing JWT token in request header"})
     }
 
     const token = authorization.split(' ')[1];
@@ -18,7 +18,7 @@ module.exports = (req, res, next) => {
         const userId = decodedToken.userId
 
         if (req.body.userId && req.body.userId !== userId) {
-            return res.status(401).json({message: "Unauthorized", status: 401, errors: "a test"})
+            return res.status(401).json({message: "Unauthorized", status: 401, errors: "invalid signature"})
         } else {
             next();
         }
