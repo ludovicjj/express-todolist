@@ -34,7 +34,7 @@ function buildQuery({ page, limit, ...searchQueryParams }) {
             let value = searchParamFilter[key];
 
             if (key === 'title' && value.length < 3) {
-                errors.push({path: "title", message: "Search field title required at least 3 letters"})
+                errors.push({path: "title", message: "Search query title required at least 3 letters"})
             }
 
             if (key === 'published') {
