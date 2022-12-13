@@ -1,5 +1,6 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const itemModel = require('../models/item');
+const userModel = require('../models/user');
 const itemFixture = require('../fixtures/fixture_items')
 
 // connection
@@ -16,8 +17,9 @@ const sequelize = new Sequelize('mariadb://root:root@localhost:3306/todo_db', {
     timezone: 'Europe/Paris' // writing to database
 });
 
-// model
+// init model
 const Item = itemModel(sequelize, DataTypes)
+const User = userModel(sequelize, DataTypes)
 
 // init database
 const initDatabase = () => {
@@ -32,11 +34,18 @@ const initDatabase = () => {
                 published: item.published
             })
         })
+
+        // Insert user
+        User.create({
+            username: "admin",
+            password: "admin"
+        })
         console.log('Synchronized database and insert data with success')
     })
 }
 
 module.exports = {
     initDatabase,
-    Item
+    Item,
+    User
 }
