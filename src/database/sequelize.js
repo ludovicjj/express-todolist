@@ -1,7 +1,8 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const itemModel = require('../models/item');
 const userModel = require('../models/user');
-const itemFixture = require('../fixtures/fixture_items')
+const itemFixture = require('../fixtures/fixture_items');
+const bcrypt = require('bcrypt');
 
 // connection
 const sequelize = new Sequelize('mariadb://root:root@localhost:3306/todo_db', {
@@ -36,10 +37,8 @@ const initDatabase = () => {
         })
 
         // Insert user
-        User.create({
-            username: "admin",
-            password: "admin"
-        })
+        bcrypt.hash("admin", 10)
+            .then(hash => User.create({ username: "admin", password: hash}))
         console.log('Synchronized database and insert data with success')
     })
 }
