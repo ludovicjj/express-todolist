@@ -9,6 +9,7 @@
   "author": "ludovicjj",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.1.0",
     "body-parser": "^1.20.1",
     "cookie-session": "^2.0.0",
     "ejs": "^3.1.8",
