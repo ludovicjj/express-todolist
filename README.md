@@ -30,13 +30,9 @@ Renommer le fichier ```config/jwt/secret-example.js``` en ```config/jwt/secret.j
 module.exports = "your_passphrase"
 ```
 
-
-
-
-
 ## Run project
 
 Express démarre sur le port ``3000`` (modifiable dans ``app.js``)
 ```
-npm start
+npm dev
 ```
