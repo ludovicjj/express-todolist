@@ -4,7 +4,8 @@
   "description": "An ultra basic todolist",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon app.js"
+    "start": "node app.js",
+    "dev": "nodemon app.js"
   },
   "author": "ludovicjj",
   "license": "ISC",
