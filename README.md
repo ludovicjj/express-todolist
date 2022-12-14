@@ -36,7 +36,7 @@ module.exports = "your_passphrase"
 
 ## Run project
 
-Express démarre sur le port ``8080`` (modifiable dans ``app.js``)
+Express démarre sur le port ``3000`` (modifiable dans ``app.js``)
 ```
 npm start
 ```

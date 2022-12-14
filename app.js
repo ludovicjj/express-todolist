@@ -6,7 +6,7 @@ const favicon = require('serve-favicon');
 const sequelize = require('./src/database/sequelize')
 
 const app = express();
-const port = 8080;
+const port = process.env.PORT || 3000;
 
 sequelize.initDatabase();
 
