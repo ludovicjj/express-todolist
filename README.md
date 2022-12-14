@@ -34,5 +34,5 @@ module.exports = "your_passphrase"
 
 Express démarre sur le port ``3000`` (modifiable dans ``app.js``)
 ```
-npm dev
+npm run dev
 ```
