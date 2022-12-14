@@ -36,3 +36,12 @@ Express démarre sur le port ``3000`` (modifiable dans ``app.js``)
 ```
 npm run dev
 ```
+
+## Login
+Authentification grâce au point d'entrée ```/api/login``` avec les identifiants suivants :
+```
+{
+    "username": "admin",
+    "password": "admin"
+}
+```
