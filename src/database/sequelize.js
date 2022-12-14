@@ -5,18 +5,34 @@ const itemFixture = require('../fixtures/fixture_items');
 const bcrypt = require('bcrypt');
 
 // connection
-const sequelize = new Sequelize('mariadb://root:root@localhost:3306/todo_db', {
-    logging: false,
-    dialectOptions: {
-        typeCast: function (field, next) { // for reading from database
-            if (field.type === 'DATETIME') {
-                return field.string();
-            }
-            return next()
+let sequelize;
+if (process.env.NODE_ENV === "production") {
+    sequelize = new Sequelize('mariadb://username:password@host:port/db_name', {
+        logging: true,
+        dialectOptions: {
+            typeCast: function (field, next) {
+                if (field.type === 'DATETIME') {
+                    return field.string();
+                }
+                return next()
+            },
         },
-    },
-    timezone: 'Europe/Paris' // writing to database
-});
+        timezone: 'Europe/Paris'
+    });
+} else {
+    sequelize = new Sequelize('mariadb://root:root@localhost:3306/todo_db', {
+        logging: false,
+        dialectOptions: {
+            typeCast: function (field, next) { // for reading from database
+                if (field.type === 'DATETIME') {
+                    return field.string();
+                }
+                return next()
+            },
+        },
+        timezone: 'Europe/Paris' // writing to database
+    });
+}
 
 // init model
 const Item = itemModel(sequelize, DataTypes)
